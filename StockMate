@@ -1,0 +1,134 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Nov 14 00:34:43 2020
+
+@author: Alonso
+"""
+
+import yfinance as yf
+import xlrd
+
+
+class Stock(object):
+    '''
+    This class saves all the details about a selected stock.
+
+    **Parameters**
+
+        info: *dict*
+            The dictionary holding information about the stock ticker.
+        analyst: *DataFrame*
+            The dataframe holding information about analyst opinions.
+    '''
+
+    def __init__(self, info, analyst):
+        '''
+        Initializes function.
+        '''
+        # The name of the company the stock belongs to.
+        self.name = info.get('longName')
+        # Price stock (to the day)
+        self.price = info.get('bid')
+        # Dividend rate per stock per year
+        self.dividend = info.get('dividendRate')
+        # Avg price over fifty days
+        self.avgprice = info.get('fiftyDayAverage')
+        # Fifty Two Week Highs and Lows. Good for risk analysis.
+        self.fivetwohigh = info.get('fiftyTwoWeekHigh')
+        self.fivetwolow = info.get('fiftyTwoWeekLow')
+        # Peg ratio > 1 shows overvaluation. < 1 shows undervaluation.
+        self.peg = info.get('pegRatio')
+        # PB Ratio < 1 is great. PB Ratio < 3 is serviceable. Only tangible.
+        self.pb = info.get('priceToBook')
+        # Profit Margins. Must compare inside industry. Higher = Better
+        self.profitmargin = info.get('profitMargins')
+        # Industry/Sector
+        self.sector = info.get('sector')
+        # Stock ticker symbol.
+        self.symbol = info.get('symbol')
+        # Two hundred day average. A good indicator of risk.
+        self.twohun_avg = info.get('twoHundredDayAverage')
+        # Company website for user to peruse.
+        self.website = info.get('website')
+        # Analyst general sentiment (self.sentiment)
+        sentiments = analyst['Action'].value_counts().index
+        mainsentiment = sentiments[0]
+        auxsentiment = sentiments[1]
+        if mainsentiment == 'up':
+            self.sentiment = 'good'
+        elif mainsentiment == 'down':
+            self.sentiment = 'bad'
+        elif mainsentiment == 'main' or mainsentiment == 'init':
+            if auxsentiment == 'main' or auxsentiment == 'init':
+                self.sentiment = 'stable'
+            elif auxsentiment == 'up:':
+                self.sentiment = 'warm'
+            elif auxsentiment == 'down':
+                self.sentiment = 'cold'
+            else:
+                self.sentiment = 'stable'
+        else:
+            self.sentiment = 'stable'
+        # Analyst grades (self.grade)
+        grades = analyst['To Grade'].value_counts().index
+        valuegrade = analyst['To Grade'].value_counts()
+        good = 0
+        neutral = 0
+        bad = 0
+        i = 0
+        for x in grades:
+            if x in {'Buy', 'Overweight', 'Outperform', 'Strong Buy',
+                     'Long-Term Buy'}:
+                good += valuegrade[i]
+            if x in {'Neutral', 'Hold', 'Market Perform', 'Equal-Weight',
+                     'Sector Perform', 'Perform'}:
+                neutral += valuegrade[i]
+            if x in {'Sell', 'Underperform', 'Underweight'}:
+                bad += valuegrade[i]
+            i += 1
+        if good >= neutral and good >= bad:
+            self.grade = 'good'
+        elif neutral >= good and neutral >= bad:
+            self.grade = 'neutral'
+        else:
+            self.grade = 'bad'
+
+    def __call__(self, x):
+        '''
+        Given number x, solve function f(x).
+        '''
+        return self
+
+
+def stock_list_initializer(excel_name):
+    '''
+    Returns the average luminance of an image.
+
+    **Parameters**
+
+        img: *PIL.Image*
+            A PIL image object.
+
+    **Returns**
+
+        l_val: *float*
+            The image luminance.
+    '''
+    wb = xlrd.open_workbook(excel_name)
+    sheet = wb.sheet_by_index(0)
+    ticker_list = []
+    for i in range(sheet.nrows):
+        ticker_list.append(sheet.cell_value(i, 0))
+    stock_list = []
+    ticker_list.pop(0)
+    for i in ticker_list:
+        print(i)
+        data = yf.Ticker(i)
+        info = data.info
+        analyst = data.recommendations
+        stock_list.append(Stock(info, analyst))
+    return stock_list
+
+
+if __name__ == "__main__":
+    stock_list = stock_list_initializer("1000_stock_list.xlsx")
