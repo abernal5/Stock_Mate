@@ -258,10 +258,10 @@ def mate_calculator(values, stock_list):
     for k in stock_list:
         if values.get(0) is True and k.sentiment != 'stable':
             result.append(k)
-        if values.get(1) is True and k.sentiment in {'warm',
-                                                     'stable', 'cold'}:
+        elif values.get(1) is True and k.sentiment in {'warm',
+                                                       'stable', 'cold'}:
             result.append(k)
-        if values.get(2) is True and k.sentiment == 'stable':
+        elif values.get(2) is True and k.sentiment == 'stable':
             result.append(k)
         else:
             result.append(k)
@@ -273,7 +273,7 @@ def mate_calculator(values, stock_list):
         change = abs(n.fivetwohigh - n.fivetwolow) / n.fivetwohigh
         if values.get(4) is True and change > 0.3:
             stock_list.append(n)
-        if values.get(5) is True and change > 0.15:
+        elif values.get(5) is True and change > 0.15:
             stock_list.append(n)
         else:
             stock_list.append(n)
@@ -350,7 +350,7 @@ def mate_calculator(values, stock_list):
     # Creating my purchasing information and appending it to resulting list.
     for t in stock_list:
         if t.purchase > 0:
-            stock_pair = [t.name, t.purchase, t.website]
+            stock_pair = [t.symbol, t.purchase, t.website]
             stock_mates.append(stock_pair)
     return stock_mates
 
