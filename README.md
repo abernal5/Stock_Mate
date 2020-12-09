@@ -20,6 +20,8 @@ For 500 stocks, this can take about 10 minutes.
 Therefore, unless the "Full" excel sheet is remarkably outdated, users are encouraged to utilize it when running the program and making minor adjustment thereafter.
 Most other directions about format are explained in the GUI.
 
+The output excel file is named: Stock_Mate_Choices.xls
+
 Have fun!
 
 Sincerely,
