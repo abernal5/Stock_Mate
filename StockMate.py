@@ -289,9 +289,11 @@ def mate_calculator(values, stock_list):
     if values.get(12) is True:
         budget = budget * 0.8
     for p in stock_list:
-        if values.get(14) is True and p.dividend > 4:
+        if p.dividend == '':
+            p.dividend = 0
+        if values.get(14) is True and float(p.dividend) > 4:
             p.value += 1
-        if values.get(15) is True and p.dividend > 4:
+        if values.get(15) is True and float(p.dividend) > 4:
             p.value += 2
     # Giving weight to sector preferences
     for q in stock_list:
