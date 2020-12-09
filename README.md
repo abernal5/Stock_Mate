@@ -1,6 +1,8 @@
 # Stock_Mate
 Authors: Alonso Bernal
 
+Module Requirements: yfinance (pip install before running code)
+
 Allows one to generate a simple list of stock recommendations.
 Using a GUI to collect user input, and cross-referencing this to the SP500, Stock_Mate can create a personalized portfolio recommendation.
 The program accepts .xlsx and .xsl files as input, but only outputs .xsl files.
